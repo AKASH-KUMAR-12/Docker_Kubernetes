@@ -1,0 +1,137 @@
+uname - username (uname -a)
+
+sudo -i --> switch to root user
+
+ctrl+l   - to clear screen
+
+cat <filename>  - reads content of the file
+
+cat /etc/os-release  - get all the details of the operating system
+
+whoami   -  who logged in
+
+who  -  to get list of users who logged in 
+
+pwd
+
+ls
+
+ls /var  -  to get the list of files in var folder
+
+ls -l   -  
+
+ls a  -- files with hidden files
+
+cd -(minus)   -  return to previous path
+
+cd  - for root user returns directory /root
+      for nonroot user returns to /home/<username>
+
+path - absolute, relative
+absolute starts with /(slash)
+relative stats with .(dot)
+. stands for current directory
+.. stands for previous directory
+
+mkdir di d2 "long dirname" (3 folders)
+
+mv file1 <directory>  --- move file,rename
+
+> -- overwrite a line
+>> -- append a line
+
+echo "text" -- display text
+echo "hi">file  --- puts content into a file
+exho "hi yet again" >> file
+
+wc -l  -- to count number of lines in a text
+wc -> words,characters and lines
+
+touch file1  --- (create file with name file1)
+
+cat -n <filename> --- show text with linenumber
+
+cp <file1> <file2>  --- copy file from file1 to file2
+
+head -2 <filename> --- gives 2 line from top
+
+tail -2 <filename> -- gives 2 lines from bottom
+
+
+
+shell scripting
+
+#!/bin/bash
+
+vi editor - cli tool for text files
+
+vi <filename>  -- to run file
+
+3 modes
+insert - i a o
+escape - esc
+command - :
+
+:wq  write quite
+:q  quite
+:q!  force quite
+:w   write
+
+:set nu  -- to display line numbers in shell script file
+
+:<number>  go to line by number 
+:/<findtext>  find text in file
+n while finding  - goes to net occurrence of word
+shift+n  - goes to previous occurance of word
+
+<n>dw - to cut <n> words
+<n>dd  - to cut <n> fill lines
+<n>yy -- yank n lines
+<n>yw -- copy n words
+
+<n>p -- paste <n> times
+
+u  - undo
+
+apt install man  --- installs manual page
+
+man -- manual page
+man <commands>  --- details about the commands
+q -- to quit the manual page
+
+
+grep -- global regular expression
+grep "system" users.txt  --- search system word in users.txt file
+
+grep -i "o$" users.txt  --- search lines ending with o(i for insensitive)
+grep -i "^o" users.txt  --- search lines starting with o
+
+grep pattern\> file  --- words ending with
+grep \<pattern file  -- words starting with
+grep "." file ---  non empty lines
+
+grep -v <pattern> file  -- invert search
+grep -i <pattern> file  --- case insensitive
+
+cat <filename> | grep [options] <pattern>
+|  --- pipeline - used to pass the output of a command onto the next command as input
+
+
+NEW ENVIRONMENT
+
+rootfs(boot,etc,root,home,lib,div,...)
+
+chroot --> to create a new environment
+
+namespaces  --> for isolation of environments
+   - unshare command --> to set namespace manually
+   - nsenter command --> to enter existing namespace
+
+cgroups --> allows sharing of system resources among enviroments
+
+
+
+
+
+
+

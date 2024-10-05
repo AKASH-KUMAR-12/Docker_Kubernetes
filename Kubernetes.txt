@@ -1,0 +1,263 @@
+Kubernetes
+
+Master Node name   Master IP       workerNode1 IP      workerNode2 IP
+ K8Master8       172.20.186.203     172.20.188.14       172.20.188.96
+
+
+1.MasterNode or Control Plane
+2.Worker Node1
+2.Worker Node2
+
+1.MasterNode
+*Developers/Admins can access Master Node or Control Plane
+*Kube API Server --> MasterNode has Kube API Server which acts as a Gatekeeper for Authentication and Authorization.
+*ETCD Server --> (key value pair)
+*Scheduler --> To decide which pod(app) should be on which worker node
+
+Container is known as POD in Kubernetes
+POD is the smallest unit of deployment in Kubernetes
+POD may have 1 or more container as a part of deployment
+
+2.Worker Node
+*POD
+*Kubelet
+*Container Runtime Ex. Docker
+*Kube proxy
+One worker Node can have multiple POD and each POD can have multiple container
+
+
+Commands 
+
+kubectl version
+
+kubectl get nodes --> gives all nodes 
+
+kubectl get nodes -o wide  -->  gives more details of nodes with ip
+
+kubectl get pods   -->  to see the running pods 
+
+kubectl run ex-pod1 --image nginx  --> create pods by giving name and image
+
+kubectl describe pod <POD name>  --> gives details of pod in key value pair
+
+kubectl explain pods --> explains pods
+
+vi pod1.yaml  --> create pod by yaml file
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-first-pod
+spec:
+  containers: 
+  - name: cont1
+    image: docker.io/nginx:run
+    command:
+    - "/bin/bash"
+    - "-c"
+    - "sleep 1000"
+
+kubectl create -f first-pod.yaml  --> run yaml file to create pod
+
+OR
+
+kubectl run my-first-pod --image docker.io/nginx:run  --> Imperative way to create pod
+
+kubectl exec -it my-second-pod bash  -->  go inside the pod shell
+
+
+Commands on Master Node
+
+systemctl start docker  -->  start Docke service
+systemctl enable docker  --> enable Docker service so that it does not stop automatically
+systemctl status docker  --> check the status of Docker
+
+kubeadm reset --force -->   reset the cluster
+
+Steps
+1.sh -x /root/Kubernetes-1.16.2/images/import_main_k8s_images.sh
+2.cd /root/Kubernetes-1.16.2/binary/  --> location for dependencies for installation
+3.yum install -y *.rpm  --> install all packages
+
+4.swapoff -a  --> swap memory is turned off
+
+5.systemctl start kubelet
+6.systemctl enable kubelet
+7.systemctl status kubelet
+
+kubeadm init --pod-network-cidr=10.244.0.0/16 --kubernetes-version=1.16.2 --ignore-preflight-errors=NumCPU | tee k8s-install.log  --> cluster created
+
+ mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+kubectl get pods -n kube-system
+
+kubectl get nodes  --> not ready status
+
+cd /root/Kubernetes-1.16.2/yamls-for-1.16.2
+
+kubectl apply -f kube-flannel.yml
+
+
+If your master node is setup already, then run
+#kubectl get nodes --> should be able to see all three nodes with ready status
+ 
+kubectl run first-pod --image docker.io/nginx:run --> create pod
+
+
+WorkerNode
+
+Steps
+
+1.sh -x /root/Kubernetes-1.16.2/images/import_main_k8s_images.sh
+2.cd /root/Kubernetes-1.16.2/binary/  --> location for dependencies for installation
+3.yum install -y *.rpm  --> install all packages
+
+4.swapoff -a  --> swap memory is turned off
+
+5.systemctl start kubelet
+6.systemctl enable kubelet
+7.systemctl status kubelet
+
+kubeadm join 172.20.186.203:6443 --token 26jbum.42t0un50kio07l17 \
+    --discovery-token-ca-cert-hash sha256:f59cca4f4455453f3379c2f17a8683c3242b5d1373eecd4bf09a62e6634e674e
+
+kube
+
+kubectl get pods --show-labels
+
+kubectl get pods -l proj!=webapp --show-labels  --> show labels of the pod
+
+kubectl label pod secon-pod-6754c949c proj=webapp owner=John --> give label to pod
+
+kubectl get pods -l proj!=webapp,owner=John --show-labels  --> gives labels which has both proj and owner
+
+
+replicaset-defination.yaml 
+apiVersion: apps/v1
+kind: ReplicaSet/Deployment
+metadata:
+  name: replica-set-nginx/deploy-nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: prodapp
+  template:
+    metadata:
+      name: replica-set-pod
+      labels:
+        app: prodapp
+    spec:
+      containers: 
+      - name: cont1
+        image: docker.io/nginx:run
+
+
+kubectl apply -f replicaset-defination.yaml  --> run replicaset yml file to create duplicates
+
+kubectl get rs --> get all replica pods
+
+kubectl rollout status deployment.apps/deploy-nginx
+
+kubectl rollout history deployment.apps/deploy-nginx
+
+kubectl rollout undo --to-revision=2 deployment.apps/deploy-nginx
+
+
+daemon-set
+
+
+NAMESPACES
+- provide a scope for Kubernetes object names
+- isolate the pods or other objects into one environment
+
+kubectl create namespace dev-ns  --> create namespace
+
+kubectl run dev-pod1 --image nginx -n dev-ns --> create pod with namespace
+
+apiVersion: v1  --> create namespace by yml file
+kind: Namespace
+metadata:
+  name: test-ns
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-first-pod
+  namespace: test-ns
+spec:
+  containers: 
+  - name: test-cont1
+    image: docker.io/nginx:run
+
+kubectl apply -f test-namespace.yaml  -->  commad to execute yaml file
+
+
+CLuster --> group of pods
+CLusterIP
+
+apiVersion: v1   --> It is default type for internal object communication
+kind: Service
+metadata:
+  name: cluster-svc
+spec:
+  type: ClusterIP
+  ports: 
+  - port: 80
+  selector:
+    app: testing
+
+kubectl apply -f clusterip-service.yaml 
+kubectl get svc
+kubectl describe svc cluster-svc
+
+apiVersion: v1   
+kind: Service
+metadata:
+  name: myapp-service
+spec:
+  type: NodePort
+  ports: 
+  - targetPort: 80    #same as application port --> nginx
+    port: 80          # port for service  --> could be same as targetPort  --> Compulsorry
+    nodePort: 30008    # Port on node  --> 30000 to 32767  --> optional  --> assigened by k8s
+  selector:
+    app: testapp
+
+
+
+ConfigMAP  --> to store non-confidential data
+
+
+apiVersion: v1   
+kind: ConfigMap
+metadata:
+  name: my-config
+data:
+  DB_NAME: mydb
+  PORT: "3306"
+
+
+Secret  --> to store confidential data
+
+
+echo "password" | base64  --> encrypt the password(encode)
+echo "y4Waf" | base64 -d  --> decode the password
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secret-pod
+spec:
+  containers:
+  - name: nginx
+    image: docker.io/nginx:run
+    volumeMounts:
+    - name: "my-secret"
+      mountPath: "/root/my-volume"
+      readOnly: true
+  volumes:
+  - name: "my-secret"
+    secret:
+      secretName: my-secret

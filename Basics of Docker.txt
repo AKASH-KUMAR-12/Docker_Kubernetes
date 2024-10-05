@@ -1,0 +1,789 @@
+Software Development Process:
+-----------------------------
+   a. Waterfall Model
+   b. Agile Model
+   c. DevOps
+
+
+ a. Waterfall Model: Strict AND FIXED requirements
+    - Requirement Analysis --> Existing product, survey, questionaire, etc. 
+    - Design --> UML diagrams --> S/w --> StarUML
+    - Coding --> Developer --> Select language --> Python(PyCharm) + MySQL --> Installation-->  
+                                                                        Development Environment
+    - Testing --> Testing team --> Tools or manual --> Python(PyCharm) + MySQL --> Installation
+								        Testing Environment
+    - Deployment --> Client Machines --> Python(PyCharm) + MySQL --> Installation
+								        Production Environment
+
+    - Maintainence 
+
+ 	- Requirement Gathering & analysis --> Business Analyst
+        - Design --> Architect
+        - Coding --> Developer --> Development Environment 
+        - Testing --> Tester --> Testing Environment
+        - Deployment --> Production Environment
+        - Maintainance
+
+   b. Agile Model: Changing requirements --> 100
+        - Working prototype --> Product
+
+
+   c. DevOps 
+        - Development + Operations
+
+	Eg: Online Shopping App --> Software Product
+	Development Environment --> Python IDE, Dependencies, Libraries 
+	Testing Environment --> Python IDE, Dependencies, Libraries 
+	Production Environment --> Python IDE, Dependencies, Libraries 
+
+
+----------------------------------------------------------------------------------------------------------
+
+
+
+Application Architecture:
+-------------------------
+   a. Monolithic
+   b. N-Tier
+   c. Microservices
+
+   a. Monolithic Architecture --> Entire application is created as whole or one single application
+			      --> It may hamper entire application if any module is not working properly
+			      --> tightly coupled --> dependent programs
+   b. N-Tier Architecture --> 
+      3-Tier --> Web Server --> Application Server --> Database Server
+                 User Interface --> Application -->    Database
+
+
+   c. Microservice based --> Divide the application into small services/microservices
+			 --> loosely coupled --> independent modules
+	Ex:
+	Modules in Online Shopping App
+	Microservice1 --> Product Catalog --> HTML, CSS, JavaScript ---> Container1 + Container5
+	Microservice2 --> Order Management --> PHP, MySQL --> Container2
+	Microservice3 --> Payment Management --> Python --> Container3
+	Microservice4 --> Shipping Management --> Python
+	-- Interact using API
+
+--------------------------------------------------------------------------------------------------
+Deployment:
+-----------
+   a. Physical Server
+   b. Virtual Server --> VM 
+   c. Containers 
+
+   Difference between VMs and Containers
+           
+--------------------------------------------------------------------------------------------------
+Application Infrastructure:
+--------------------------
+	- Data Center
+	- Hosted
+	- Cloud	
+
+--------------------------------------------------------------------------------------------------
+Summary:
+--------
+Application  -- > Development Team + Testing Team
+Deployment   -- > Operations Team
+--> Development and Operations team work together to deliver applications at faster pace.
+
+Online shopping app with multiple modules:
+ - Each module(service) is again divided in microservices
+ - Each microservice may be created/written using various tools and languages
+ - Create an image (package) for each microservice
+ - Running instance of an image is container
+
+--------------------------------------------------------------------------------------------------
+
+Containers:
+-----------
+Containers--> Packaging application with all dependencies and delivering it irrespective of target environment 
+		
+For containerization:
+1. LXC (Linux Containers)
+2. Docker 
+
+
+
+1. Linux Containers:
+--------------------
+- A process/processes isolated from other processes running on a single host machine
+- Kernel performs this isolation using chroot, namespace and cgroups
+
+Features:
+- Easily portable and consistent --> due to images
+- Offer lightweight OS level virtualization --> due to sharing OS kernel
+- Near bare metal runtime performance --> as if no resources are shared
+- Faster deployment
+- Provides agility
+
+Tools used:
+a. chroot
+b. namespaces
+c. cgroups
+
+a. chroot --> create exclusive root directory for container
+- Execute the top command in host system and kill it through new environment(container)
+
+b. namespaces --> create restricted views of systems --> provide isolation of environments
+- create namespace for process tree so that container have seperate process ftree from that of host system
+- unshare command allows us to set the namespace manually
+- nsenter command to enter into an existing namespace
+
+c. cgroups --> allows the kernel to restrict the amount of resource each process uses 
+- resources could be processor, CPU, memory, disk, network etc.
+- It provides control over resources
+
+
+2. Docker 
+---------
+Bootable Pendrive --> OS ---> Image --> Read only 
+
+Person 1 --> Install OS in machine --> Later install Python --> 
+Read + Write --> Run image --> Container
+
+Person 2 --> Install OS in machine --> Later install Android
+
+- Docker is an open source platform to build, deploy and run applications with containers
+- Images are built either from sources or docker file
+
+Rest APIs:
+a. Engine API (controls the docker engine using this API)
+b. Plugin API (extends the engine)
+c. Registry API (upload/download images)
+
+Features:
+- Lightweight virtualization
+- Adopts LXC format 
+- Provides immutable architecture
+    - Immutability: Change is updated in terms of new container image keeping the old image intact
+- Instant deployment
+- Suitable for microservice based architecture
+
+Docker IMAGE --> Template --> Read Only
+Run image to create CONTAINERS --> Read-Write
+
+Image --> (RUN) ---> Container
+
+
+
+Lifecycle of a container:
+- Different states of a container are:
+	i.  created: container created but not started
+ 	ii. running: container started
+	iii.paused:  container stopped temporarily
+        iv. restarting: container restarted
+        v.  exited:  container stopped due to some problem
+        vi. dead:    container removed from the host 
+-------------------------------------------------------------------------------------------------------------
+Commands:
+---------
+
+To check docker images 
+# docker images
+
+To create a CONTAINER --> Run docker image
+a. Run the centos container in interactive mode 
+   # docker run -it <image_id> or
+   # docker run -it <image_name>:<tag>
+
+
+b. Run a container in detached mode --> in background
+   # docker run -d <image_id>
+
+A container will be in running state only till atleast one process is running in it.
+If no process running, it will be exited
+
+
+To attach a detached container running in background
+# docker attach <container_id>
+
+To check the status of container 
+# docker ps -a --> list of all containers
+# docker ps --> list of only running containers
+# docker ps -l --> latest container
+
+To execute a command on running container
+# docker exec <container_id> cat /etc/fstab
+
+To start the container if in exited state
+# docker start <container_id>
+
+To get statistics of running container
+# docker stats <container_id>
+
+To see processes within a container 
+# docker top <container_id>
+
+To kill the processes inside a container --> terminate the container immediately
+# docker kill <container_id>
+
+To stop a container --> to close the container gracefully
+# docker stop <container_id>
+
+To remove a container
+# docker rm <container_id>
+
+To check the logs 
+# docker logs <container_id>
+
+To name the container
+# docker run -d --name <container_name> <container_id>
+
+
+Example: Create container 
+
+------------------------------------------------------------------------------------------------------
+
+Docker Images:
+--------------
+
+Docker Image --> (RUN) ---> Docker Container
+
+- Made up of layers
+- A Docker image once built, is immutable because it is only a read-only filesystem 
+
+Types of Docker registries:
+i. Docker hub- official image resource owned Docker. 
+ii. Self-hosted registry- using organization’s infrastructure. 
+iii. Third party registry- AWS EC2 Container registry, Google registry, etc.
+
+Namespaces of Docker images:
+- Push/pull images from/to docker registry using docker client
+- Three types of namespaces are used
+	i. Official images
+        ii.Images inside a repository
+           <repository_name>/<image_name>
+        iii.Images from a self-hosted registry
+           <path_of_the _registry>:<port>/<repository_name>/<image_name>
+
+a. On local machine --> You may push them to DockerHub repository
+   # docker push <username>/<repository_name>:<tagname>
+
+b. Repository --> Eg: Docker Hub --> You may pull them to local machine
+
+To pull/push images between docker hub and local machine
+a. Create an account on DockerHub & login --> Browser
+b. Login through local machine
+   # docker login
+
+
+Cluster - combination of nodes along with master node who are responsible to manage containers which are running on worker nodes
+
+Clustering - To create this combination of nodes and perform tasks on each node. Tasks related to containers.
+
+Docker clustering - 
+1. docker swarm
+2. kubernetes
+
+- Containers which run on different physical servers can be managed together under one cluster. It is managed environment. Cluster creation is first step to manage containers.
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Exercise: Create container for microservice
+
+1. We can get the image from DockerHub or local machine
+
+2. To create new image, we need 2 things:
+	1. Code of microservice --> html page --> index.html --> Development Team 
+	2. Dockerfile --> DevOps Engineer
+	   Use base image --> FROM python:3-alpine --> DockerHub
+	   COPY index.html /var/www/html/ --> copy file to directory
+	   EXPOSE 8080 --> Mention port no. 
+	        
+	   CMD ["sh","-c","cd /var/www/html && python3 -m http.server 8080"] -->
+		1. sh -c cd /var/www/html
+		2. sh -c python3 -m http.server 8080
+
+3. Build an image by assigning repository name --> Assume that it is created by development team
+	 # docker build -t mydemoimage .
+
+4. Run the image to create a container --> It can be run in any environment--> Development,Testing,Prod.
+	 # docker run -it <image_id>
+
+5. Create a new repo in dockerhub
+
+6. Create a tag of your microservice
+docker tag <image_id> <DockerHub_username>/<repo_name>:<version>
+
+7. Push the image into docker hub
+docker push <DockerHub_username>/<repo_name>:<version>
+
+8. Image can be pulled and run in any environment
+docker pull <DockerHub_username>/<repo_name>:<version>
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+FROM --> Base image
+Ex: FROM ubuntu
+RUN --> Execute this while creating an image 
+
+Ex: RUN apt-get install http
+    RUN apt-get install ftp
+
+CMD --> execute this when container is created
+
+
+Example: Create a container from nginx image published on port 8080.
+
+Step 1: Check IP address of your machine 
+http://172.20.178.59:8080 --> check the output in browser
+
+Step 2: Create a container
+docker run -d -p 8080:80 nginx
+
+Step 3: Check the running container
+docker ps
+
+Step 4: Go to browser an refresh 
+http://172.20.178.59:8080/
+<Host_IP>:<Host port>
+
+-------------------------------------------------------------------------------------------------
+
+Dockerfile --> Text file to create customized image from base image
+
+Example: Create a customized image to have pre-installed Python3 in Ubuntu base image
+
+FROM ubuntu
+
+# Update package lists
+RUN apt-get update
+
+# Install Python3
+RUN apt-get install -y python3
+
+
+---------------------------------------------------------------------------------
+Dockerfile parameters
+
+           FROM <Image-name> --> Base image
+     
+	   RUN <command> --> Executed while image is created
+		         --> Before the image is built
+                         --> Layer upon base image 
+                         --> Multiple Run are allowed
+
+           COPY <file_on_host> <location_on_container> 
+           --> copies contents from host machine to container
+                                                                               
+           CMD ["arg1","arg2"] --> Executed when container is created
+                               --> After the image is run
+                               --> Only one CMD is allowed
+
+
+        
+Built time instructions --> RUN, COPY 
+Entrypoint and command 
+
+---------------------------------------------------------------------------------
+
+
+---------------------------------------------------------------------------------
+TASK --> Create customized docker images and then create containers
+
+1. Create a directory named "nginx-app" --> Optional
+
+2. In this directory, create a file with name index.html  --> Add some HTML tags
+<HTML>
+<BODY>
+<H1> WELCOME TO DOCKER SESSION!!!</H1>
+<H3> HAPPY LEARNING!!! </H3>
+</BODY>
+</HTML>
+
+3. Create a docker file "Dockerfile" with nginx as base image 
+FROM nginx
+COPY index.html /usr/share/nginx/html/
+
+- Copy the index file from host to /usr/share/nginx/html/ location in container.
+
+4. Build an image 
+# docker build -t <image_name> <location of Dockerfile>
+# docker build -t my_website_image .
+
+If you use any other name for docker file, say custom.dockerfile
+# docker build -t my_website_image . -f custom.dockerfile
+  
+5. Check the built image
+# docker images 
+--> Should list my_website_image
+
+6. Run the image --> Create a container
+# docker run -d -p 8080:80 my_website_image
+
+7. Connect to browser and verify the output
+http://<Docker_Host_IP>:<Host_Port>
+Ex: http://172.20.190.53:8080
+---------------------------------------------------------------------------------
+
+Docker Images:
+--------------
+1. Existing images --> Docker hub, self-registered or cloud repository
+
+2. Creating customized images --> Web Server
+
+	a. Create a docker file --> Dockerfile
+
+               
+        b. index.html
+
+
+     - Build/create the image
+	# docker build -t <image_name> .
+          where, 
+          . --> current working directory where DOckerfile is present
+
+
+     - Run an image to get a container --> -it or -d 
+
+----------------------------------------------------------------------------------------------------
+
+Docker Network Drivers:
+-----------------------
+1. bridge --> default network driver which allows all containers to communicate to each other as well as to host and vice-versa.
+CIDR --> 172.17.0.0/16
+Host --> 172.17.0.1
+Containers --> 172.17.0.2, 172.17.0.3,.......
+
+2. none   --> container in isolation with other containers as well as host
+
+3. host   --> network isolation between host and container is removed and both get same set of IP addresses
+
+
+
+Total bits -->  IPv4 addresses we need 32 bits
+0   --> 0000 0000 --> Min. number
+255 --> 1111 1111 --> Max. number
+
+Eg:
+172.20.188.80 --> 10101100  00010100 10111100 01010000
+
+
+Class A --> Network(8 bits) + Host(24 bits)
+
+Eg:
+Subnet 1 
+   10.0.0.1 --> Host1
+   0000 1010.0000 0000. 0000 0000. 0000 0001
+
+   10.2.4.5 --> Host2
+
+Subnet 2
+    9.1.0.9  --> Host3
+    9.8.7.6  --> Host4
+
+
+Number of IP addresses that can generated in class A are 2^24 IP addresses
+
+
+Class B --> Network(16 bits) + Host(16 bits)
+
+Subnet 1
+Eg: 172.17.0.1 --> Host1
+    172.17.9.8 --> Host2
+
+
+Subnet 2
+     166.78.0.19 --> Host3
+     166.78.9.80 --> Host4
+
+Number of IP addresses that can generated in class B are 2^16 IP addresses
+
+
+Class C --> Network(24 bits) + Host(8 bits)
+
+Subnet 1
+Eg: 200.10.20.4 --> Host1
+    200.10.20.7--> Host2
+
+Subnet 2
+    172.20.188.56 --> Host3
+    172.20.188.76 --> Host4
+
+
+Number of IP addresses that can generated in class C are 2^8 = 256 IP addresses
+
+
+CIDR --> Network (20 bits) 
+192.168.10.0/20 --> 20 network bits
+                    Host bits = 32-20 = 12 
+                    IP addresses ==> 2^12 
+
+Network (28 bits) 
+192.168.10.240/28 --> 28 network bits
+                     Host bits = 32-28 = 4
+
+11000000.10101000.00001010.1111 0000 --> 192.168.10.240
+11000000.10101000.00001010.1111 0001 --> 192.168.10.241
+11000000.10101000.00001010.1111 0010 --> 192.168.10.242
+11000000.10101000.00001010.1111 0011 --> 192.168.10.243
+11000000.10101000.00001010.1111 0100 --> 192.168.10.244
+11000000.10101000.00001010.1111 0101 --> 192.168.10.245
+11000000.10101000.00001010.1111 0110
+11000000.10101000.00001010.1111 0111
+11000000.10101000.00001010.1111 1000
+11000000.10101000.00001010.1111 1001
+11000000.10101000.00001010.1111 1010
+11000000.10101000.00001010.1111 1011
+11000000.10101000.00001010.1111 1100
+11000000.10101000.00001010.1111 1101
+11000000.10101000.00001010.1111 1110
+11000000.10101000.00001010.1111 1111 
+
+
+
+Host bits = 32-28 = 4 bits
+                    IP addresses ==> 2^4 = 16
+
+
+
+
+1. bridge(default) --> uses the subnet 172.17.0.0/16 
+IP addresses --> 2^16 --> 65536
+
+Host Docker IP --> 172.17.0.1
+
+Container IP --> 172.17.0.2 to 172.17.0.255
+                 172.17.1.1 to 172.17.1.255..................
+
+Example:
+a. Create a Ubuntu container in interactive mode and check IP address. Come out the interactive mode without exiting.
+r
+# docker run -it ubuntu:18.04
+/# hostname -I --> Check IP address of container1 --> 172.17.0.2
+Ctrl + P + Q   --> Come out without exiting
+
+b. Create a CentOS container in interactive mode and check IP address. Ping Ubuntu container and host machine also.
+# docker run -it centos:8
+/# hostname -I     --> Check IP address of container2 --> 172.17.0.3
+/# ping 172.17.0.2 --> IP address of container1
+/# ping 172.17.0.1 --> Host Machine IP (Default for Bridge network in Docker)
+
+
+2. none --> containers not attached to any network so run in isolation
+
+Example:
+Create a CentOS container in interactive mode and check IP address.
+# docker run --net none -it centos
+# ip a 
+# ping 172.17.0.1 --> Network not reachable
+
+
+3. host --> network isolation between the Docker host and the container is removed
+Example:
+
+From host machine --> Check IP address
+
+Create a CentOS container in interactive mode, network should be host and check IP address.
+# docker run --net host -it centos
+
+# hostname -I ---> gets the same IP addresses as that of host machine
+
+CASES:
+
+a. If nginx container is created in host network without any port mapping, still you are able to connect to it with host IP 
+
+
+b. If nginx container is created in default network without any port mapping, you cannot able to connect to it with host IP
+
+c. If nginx container is created in default network with some port mapping, you can able to connect to it with host IP and port number
+
+--------------------------------------------------------------------------------------
+
+4. container --> re-use the network stack of another container
+
+Example:
+Create a CentOS container in interactive mode by providing container id to associate with and check IP address.
+# docker run --net container:<container_id> -it centos
+# hostname -I
+
+Container Network Model:
+------------------------
+# docker network ls
+
+# docker network create mynetwork
+
+# docker run -d --name cont1 --net mynetwork nginx
+
+# docker run -it --name cont2 --net mynetwork centos
+
+/# ping -c2 cont1
+/# exit
+
+# docker network rm mynetwork
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Docker Compose:
+---------------
+
+Create three containers
+# docker run -d centos:7 --name centos_cont
+# docker run -d ubuntu:18.04 --name  ubuntu_cont
+# docker run -d nginx:latest --name web_server
+
+
+--> When we run individual commands to get task done, it is called Imperative 
+
+--> When we create a single file by using all the required commands, it is called Declarative
+  --> Docker Compose --> declarative way
+
+
+Eg:
+docker-compose.yaml/docker-compose.yml
+
+services:
+  centos_cont:
+    image: centos:7
+  ubuntu_cont:
+    image: ubuntu:18.04
+  web_server:
+    image: nginx:latest
+
+-------------------------------------------------------------------------------------------------
+Docker Volumes:
+---------------
+1. Bind mounts --> a directory on host is mapped to a directory in the container filesystem
+
+Example:
+Create a directory in host --> mkdir /container1_data_on_host
+
+Create a file --> cat > /container1_data_on_host/host_file
+
+Check its contents --> ls -l /container1_data_on_host
+
+Create a container in interactive mode --> docker run -it -v /container1_data_on_host:/data centos 
+			Create some file in /data directory --> touch /data/cont_file.txt
+			Exit from the container
+Verify the contents of host directory --> ls -l /container1_data_on_host
+-------------------------------------------------------------------------------------------------
+
+
+Create one directory in host for sharing data with container 1 (Add one file "cont1" here)
+
+Create second directory in host for sharing data with container 2 (Add one file "cont2" here)
+
+
+Create ubuntu container in interactive mode and check the shared file contents "cont1".
+Share a file "cont11" with host.
+
+
+Create centos container in interactive mode and check the shared file contents "cont2".
+Share a file "cont22" with host.
+
+-------------------------------------------------------------------------------------------------
+
+Create a directory my-website on Docker host. 
+
+Create a web page with name index.html in this directory.
+
+Create a web server (using nginx) with customized index page. --> Dockerfile -->Build custom image
+
+
+Connect to web page through browser. --> Container using bind mount--> Running image
+
+OR
+
+Connect to web page through browser. --> Container with Docker Volume--> Running image
+
+--------------------------------------------------------------------------------
+# docker run -it -v /root/shared-dir:/cont2 ubuntu   --> Bind mount example
+                    <HOST-PATH>     : <CONT-PATH>
+ 
+# docker run -it -v my-volume:/cont3 ubuntu          --> Docker Volume example
+                    <Volume-name>:<cont-path>
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------------------------------------------------------Case 1: Sharing volume from host to container
+
+Create a directory in host --> mkdir -p /nginx/web-pages
+Add contents in a new index file --> echo "Happy learning" >> /nginx/web-pages/index.html
+Create a container in detached mode --> 
+
+docker run --name ns1 -d -p 8080:80 -v /nginx/web-pages:/usr/share/nginx/html nginx
+
+
+Go to browser and verify the output --> http://<IP_address>:8080
+
+
+Dockerfile: ---> All this is included on image --> any change cannot be updated in image
+FROM nginx
+COPY index.html /usr/share/nginx/html
+     <host>              <container>--> default location for web pages
+
+-------------------------------------------------------------------------------------------
+
+
+
+2. Docker Volumes --> Volumes are stored on host but completely managed by docker
+                  --> Sharing volume across containers and host
+
+
+Create a volume on host --> docker volume create --name Volume1
+
+Check the created volume --> docker volume ls
+
+Create a container --> docker run -it --rm -v Volume1:/container1 centos
+                       Create some file in /container1 directory --> 
+                                         touch /container1/vol1.txt
+		       Exit from the container
+
+Inspect the volume --> docker inspect volume Volume1
+
+Attach the volume to another container --> 
+docker run -it --rm -v Volume1:/container2 centos
+
+Check the file --> ls /container2/vol1.txt
+Verify the contents on host --> ls /var/lib/docker/volumes/Volume1/_data/
+
+
+------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

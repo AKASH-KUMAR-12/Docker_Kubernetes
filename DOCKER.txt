@@ -1,0 +1,167 @@
+DOCKER
+
+172.20.188.189(VM)
+user--sysadmin
+pass--Sys@dm1n
+
+Remote Desktop Connection(mysimstts01)
+
+Image  -> Read only --> From where to get it?
+Create an image
+Download it  --> Docker hub  --> Login
+
+Commands
+
+docker images  --> check all images of docker
+
+docker run  -->  create a container or use container
+-it  --> "i" for interactive and "t" for terminal
+
+docker run -it ubuntu  --> run ubuntu
+docker run -it ubuntu:20.04  
+docker run -d --> run in detach mode (run in background)
+
+cat /etc/os-release  --> to check the os version and details
+
+docker ps  --> list running containers
+docker ps -a  --> list all the containers
+docker ps -q  --> gives container ID
+docker ps -l  --> latest container
+docker ps -n 2  -->  gives n container
+docker ps -aq  --> gives all containers ID
+
+docker attach <containerID>  -->  go inside the container
+docker exec -it <nginxID> bash --> used to go to shell of nginx
+
+docker start <containerID>  -->  start the container
+docker stop <containerID>  -->  stop the container
+
+docker run -d -p 8080:80 nginx  --> create nginix docker using port
+
+Ctrl+p+q  --> exit from docker container
+
+docker build -t ubuntu:custom .  --> create image (.) is used for current dir
+docker build -t ubuntu:custom -f file.dockerfile --> customer dockerfile
+
+FROM ubuntu:20.04         # FROM --> Add the base image
+WORKDIR /root              #WORKDIR --> Present working directory in container
+COPY /root/host-file .  #COPY ---> copy from host(source) to container
+RUN mkdir cont-dir          #RUN --> Execute command while image is created.
+
+FROM ubuntu:18.04
+WORKDIR /root
+COPY host-file .
+RUN mkdir cont-dir
+
+RUN apt-get update
+
+Run apt-get install -y python3
+
+ENTRYPOINT ["echo","Welcome"] -->(want to have some task when we enter container) used cmd with entrypoint when user passes some value while container is ran
+
+CMD ["All"]
+
+ip a | grep docker
+
+
+DOCKER NETWORK DRIVERS
+
+1.BRIDGE --> default network driver which allows all containeers to communicate to each other as well as to host and vise-versa
+CIDR --> 172.17.0.0/16
+HOST --> 172.17.0.1
+Containers --> 172.17.0.2, 172.17.0.3, ...
+
+2.NONE --> container in isolation with other containers as well as host
+
+3.HOST addresses --> network isolation between host and container is removed and both get same set of IP addresses
+
+bridge(default) --> uses the subnet 172.17.0.0/16
+IP address  --> 2^16 --> 65536
+
+Container with NONE as a networkType no default ip address is given
+Container with BRIDGE as a networkType default ip address is given
+
+hostname -I --> check ip address of container
+
+host docker ip --> 172.10.2.1
+container ip  --> 172.10.2.2 to 172.10.2.255
+
+1.If nginx container is created in host network without any port mapping, still you are able to connect to it with host IP 
+
+2.If nginx container is created in default network without any port mapping, you cannot able to connect to it with host IP 
+
+3.If nginx container is created in default network with port mapping, you are able to connect to it with host IP and port number
+
+ping -c2 172.17.01  --> send packets 2 times
+
+docker run -it --net none centos:7  --> create container with specific network type NONE
+
+container --> reuse the network stack of another container
+
+Example
+Create a CentOS in interactive mode by providing container id to associate 
+docker run -it --net container:<containerID> <newImage>
+docker run -it --net container:fe6580c4a670 ubuntu:16.04
+
+docker run -it --name cont1 ubuntu:16.04  --> create container with name
+
+**We can pass packets from one container to other container with container name when customer network is givern
+docker run -it --name cont1 --net my-network centos:8
+docker run -it --name cont2 --net my-network centos:7
+ping -c2 cont1
+
+docker run -it -v /root/shared-dir:/cont1-dir centos:7  -->  volume share file from host to container i.e store of host is used in container to store files
+-v  --> volume
+
+
+docker volume create my-volume  --> create custom volume
+docker volume ls
+docker volume rm my-volume
+
+docker run -it -v my-volume:/cont3 ubuntu:16.04
+docker inspect my-volume  --> gives the location of the custom volume 
+
+#docker run -it -v /root/shared-dir:/cont1-dir centos:7  -->  Bind mount example
+		   <HOST-PATH>     :  <CONT-PATH>
+#docker run -it -v my-volume:/cont3 ubuntu:16.04  --> Docker volume example
+ 		   <VOLUME-NAME> : <CONT-PATH>
+
+FROM nginx
+COPY /my-website/index.html /usr/share/nginx/html   --> nginx Dockerfile
+
+ docker run -d -p 8080:80 -v /root/my-website:/usr/share/nginx/html nginx  -->  hosting website using volume so that whenever index.html file changes it will automitically reflects in the webpage
+
+docker compose is a way to write multile commands 
+it has .yaml file  with key value pair
+
+1.Array/Lists --> ordered--. one key with many values
+Fruit Array for multiple data
+Fruits:  -->Key
+- Apple  -->value
+- Banana  -->val
+- Mango  --> val
+
+2.Dictionary/map --> unordered
+Apple:
+	Calories: 170 --> key:value
+	Carbs: 25g
+Banana:
+	Calories: 250
+	Carbs: 15g
+
+Example
+services:
+ web_server1:
+  image: nginx:alpine
+  ports:
+  - 8080:80
+ web_server2:
+  image: nginx:latest
+  ports:
+  - 8081:80
+
+
+docker-compose up  --> 
+docker-compose down  --> 
+
+
